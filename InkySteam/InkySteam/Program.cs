@@ -14,15 +14,15 @@ namespace InkySteam
             //Starts the app...
             SteamAPI.RestartAppIfNecessary((Steamworks.AppId_t)681220);
 
-            bool initialized = Steamworks.SteamAPI.Init();
+            //bool initialized = Steamworks.SteamAPI.Init();
 
-            Console.WriteLine("Initialized: " + initialized);
+            //Console.WriteLine("Initialized: " + initialized);
 
             //Console.WriteLine("Steam User ID: " + SteamUser.GetSteamID());
 
-            SteamManager sm = new SteamManager();
-
-            SteamAPI.Shutdown();
+            SteamManager.Instance.createSessionTicket();
+            Console.WriteLine("Session Ticket:\n" + SteamManager.Instance.getSessionTicketAsText());
+            //SteamAPI.Shutdown();
         }
     }
 }
