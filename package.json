@@ -17,6 +17,9 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^9.2.0"
+    "electron": "^8.2.3"
+  },
+  "dependencies": {
+    "electron-edge-js": "^12.14.2"
   }
 }
