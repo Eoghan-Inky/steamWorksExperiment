@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Steamworks;
-
+using System.Threading;
 
 namespace InkySteam
 {
@@ -22,7 +22,12 @@ namespace InkySteam
 
             SteamManager.Instance.createSessionTicket();
             Console.WriteLine("Session Ticket:\n" + SteamManager.Instance.getSessionTicketAsText());
-            //SteamAPI.Shutdown();
+            for(int i = 0; i <100; i++) {
+                Thread.Sleep(100);
+                SteamAPI.RunCallbacks();
+                Console.Write(".");
+            }
+            SteamAPI.Shutdown();
         }
     }
 }
