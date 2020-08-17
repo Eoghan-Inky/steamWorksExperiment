@@ -14,26 +14,17 @@ namespace InkySteam
             //Starts the app...
             SteamAPI.RestartAppIfNecessary((Steamworks.AppId_t)681220);
 
-            //bool initialized = Steamworks.SteamAPI.Init();
-
-            //Console.WriteLine("Initialized: " + initialized);
-
             //Console.WriteLine("Steam User ID: " + SteamUser.GetSteamID());
 
-            SteamManager.Instance.createSessionTicket();
-            //Console.WriteLine("Session Ticket:\n" + SteamManager.Instance.getSessionTicketAsText());
-            for(int i = 0; i <100; i++) {
-                Thread.Sleep(100);
-                SteamAPI.RunCallbacks();
-                Console.Write(".");
-            }
+            SteamManager.Instance.CreateSessionTicket();
+            
             Console.WriteLine("Session Ticket:\n" + SteamManager.Instance.getSessionTicketAsText());
 
             Console.WriteLine();
             Console.WriteLine("Press to end...");
             Console.ReadLine();
 
-            SteamAPI.Shutdown();
+            SteamManager.Instance.Shutdown();
         }
     }
 }

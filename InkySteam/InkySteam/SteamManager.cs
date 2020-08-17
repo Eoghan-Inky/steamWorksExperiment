@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Steamworks;
 
 namespace InkySteam
@@ -14,6 +15,7 @@ namespace InkySteam
 
         static ManualResetEvent s_resetEvent = new ManualResetEvent(false);
 
+        readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         protected Callback<GetAuthSessionTicketResponse_t> m_getAuthSessionTicketResponse;
         
@@ -23,7 +25,7 @@ namespace InkySteam
 
         /// <summary>
         /// On first call, should call 
-        /// DOuble lock pattern.
+        /// Double lock pattern.
         /// </summary>
         public static SteamManager Instance
         {
@@ -66,9 +68,10 @@ namespace InkySteam
 
             //Enable Responses
             m_getAuthSessionTicketResponse = Callback<GetAuthSessionTicketResponse_t>.Create(OnGetAuthSessionTicketResponse);
+            Task.Run(StartListeningForCallBacks);
         }
 
-        public void createSessionTicket()
+        public void CreateSessionTicket()
         {
 
             m_ticket = new byte[1024];
@@ -83,7 +86,7 @@ namespace InkySteam
         void OnGetAuthSessionTicketResponse(GetAuthSessionTicketResponse_t pCallback)
         {
             Console.WriteLine("[" + GetAuthSessionTicketResponse_t.k_iCallback + " - GetAuthSessionTicketResponse] - " + pCallback.m_hAuthTicket + " -- " + pCallback.m_eResult);
-            //s_resetEvent.Set(); //Tell that cllback is finished.
+            //s_resetEvent.Set(); //Tell that callback is finished.
         }
 
         public string getSessionTicketAsText()
@@ -98,10 +101,17 @@ namespace InkySteam
             return sb.ToString();
         }
 
+        public void Shutdown()
+        {
+            //What happens if this gets called multiple times?
+            Console.WriteLine("Shutdown...");
+            StopListeningForCallBacks();
+            SteamAPI.Shutdown();
+        }
+
         ~SteamManager()
         {
-            Console.WriteLine("Shutdown...");
-            SteamAPI.Shutdown();
+            Shutdown();
         }
 
         private void Awake()
@@ -119,6 +129,21 @@ namespace InkySteam
                 //Application.Quit();
                 throw new Exception("[Steamworks.NET] Could not load [lib]steam_api.dll/so/dylib. It's likely not in the correct location. Refer to the README for more details.", e);
             }
+        }
+
+
+        private async Task StartListeningForCallBacks()
+        {
+            while (!cts.IsCancellationRequested)
+            {
+                Thread.Sleep(100);
+                SteamAPI.RunCallbacks();
+            }
+        }
+
+        private void StopListeningForCallBacks()
+        {
+            cts.Cancel();
         }
     }
 }
