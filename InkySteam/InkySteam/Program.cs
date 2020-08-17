@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Steamworks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace InkySteam
 {
@@ -16,7 +17,7 @@ namespace InkySteam
 
             //Console.WriteLine("Steam User ID: " + SteamUser.GetSteamID());
 
-            SteamManager.Instance.CreateSessionTicket();
+            Task.Run(SteamManager.Instance.CreateSessionTicket).Wait();
             
             Console.WriteLine("Session Ticket:\n" + SteamManager.Instance.getSessionTicketAsText());
 

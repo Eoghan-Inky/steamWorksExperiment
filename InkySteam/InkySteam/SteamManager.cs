@@ -71,22 +71,35 @@ namespace InkySteam
             Task.Run(StartListeningForCallBacks);
         }
 
-        public void CreateSessionTicket()
+        public async Task CreateSessionTicket()
         {
 
             m_ticket = new byte[1024];
             m_HAuthTicket = SteamUser.GetAuthSessionTicket(m_ticket, 1024, out m_pcbTicket);
             
             Console.WriteLine("SteamUser.GetAuthSessionTicket(Ticket, 1024, out pcbTicket) - " + m_HAuthTicket + " -- " + m_pcbTicket);
-            
-            //s_resetEvent.WaitOne(); //Wait for callback.
+
+            //Wait for callback.
+            Task t = WaitForAuthSessionTicketResponse();
+            if(await Task.WhenAny(t, Task.Delay(20000)) != t)
+            {
+                throw new Exception("Timed out!");
+            }
+
+            Console.WriteLine("Ended.");
+        }
+
+        private async Task WaitForAuthSessionTicketResponse()
+        {
+            s_resetEvent.WaitOne();
+            Console.WriteLine("Done!");
         }
 
         //Never seems to get called!!! 
         void OnGetAuthSessionTicketResponse(GetAuthSessionTicketResponse_t pCallback)
         {
             Console.WriteLine("[" + GetAuthSessionTicketResponse_t.k_iCallback + " - GetAuthSessionTicketResponse] - " + pCallback.m_hAuthTicket + " -- " + pCallback.m_eResult);
-            //s_resetEvent.Set(); //Tell that callback is finished.
+            s_resetEvent.Set(); //Tell that callback is finished.
         }
 
         public string getSessionTicketAsText()
