@@ -73,6 +73,7 @@ namespace InkySteam
 
             m_ticket = new byte[1024];
             m_HAuthTicket = SteamUser.GetAuthSessionTicket(m_ticket, 1024, out m_pcbTicket);
+            
             Console.WriteLine("SteamUser.GetAuthSessionTicket(Ticket, 1024, out pcbTicket) - " + m_HAuthTicket + " -- " + m_pcbTicket);
             
             //s_resetEvent.WaitOne(); //Wait for callback.

@@ -21,12 +21,18 @@ namespace InkySteam
             //Console.WriteLine("Steam User ID: " + SteamUser.GetSteamID());
 
             SteamManager.Instance.createSessionTicket();
-            Console.WriteLine("Session Ticket:\n" + SteamManager.Instance.getSessionTicketAsText());
+            //Console.WriteLine("Session Ticket:\n" + SteamManager.Instance.getSessionTicketAsText());
             for(int i = 0; i <100; i++) {
                 Thread.Sleep(100);
                 SteamAPI.RunCallbacks();
                 Console.Write(".");
             }
+            Console.WriteLine("Session Ticket:\n" + SteamManager.Instance.getSessionTicketAsText());
+
+            Console.WriteLine();
+            Console.WriteLine("Press to end...");
+            Console.ReadLine();
+
             SteamAPI.Shutdown();
         }
     }
